@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สรุปสุขภาพประจำสัปดาห์ (7-13 ก.ย.) - Health Tracker</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Kanit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Kanit', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        },
+                        water: {
+                            50: '#f0f9ff',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                        },
+                        sleep: {
+                            50: '#f5f3ff',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+        }
+        /* Custom subtle scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+    <div class="min-h-full pb-12">
+        <!-- Top Navbar -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo / App Name -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                            <i class="fa-solid font-bold fa-heart-pulse text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold text-slate-900 leading-tight">Health Tracker</h1>
+                            <p class="text-xs text-slate-500">แดชบอร์ดสรุปสุขภาพส่วนตัว</p>
+                        </div>
+                    </div>
+
+                    <!-- User Profile Badge -->
+                    <div class="flex items-center gap-3">
+                        <div class="text-right hidden sm:block">
+                            <div class="text-sm font-semibold text-slate-900">ผู้ใช้งานทั่วไป</div>
+                            <div class="text-xs text-slate-500">เป้าหมาย: ออกกำลังกาย 5 วัน/สัปดาห์</div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-100 border border-slate-200 py-1.5 px-3 rounded-full text-xs font-semibold text-slate-700">
+                            <i class="fa-solid fa-weight-scale text-slate-500"></i>
+                            <span>น้ำหนัก 85 กก.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Container -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+            <!-- Title & Date Range Banner -->
+            <div class="mb-8 md:flex md:items-center md:justify-between">
+                <div>
+                    <div class="flex items-center gap-2 text-sm font-medium text-brand-600 mb-1">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        <span>สรุปภาพรวมรายสัปดาห์</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">รายงานสุขภาพ 7 วันที่ผ่านมา</h2>
+                    <p class="text-slate-500 text-sm mt-1">ข้อมูลระหว่างวันที่ <span class="font-semibold text-slate-700">7 กันยายน - 13 กันยายน</span></p>
+                </div>
+                <!-- Action / Target Banner badge -->
+                <div class="mt-4 md:mt-0 inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-sm font-medium shadow-sm">
+                    <i class="fa-solid fa-trophy text-emerald-600 text-lg"></i>
+                    <span>บรรลุเป้าหมายการออกกำลังกายสัปดาห์นี้! (5/5 วัน)</span>
+                </div>
+            </div>
+
+            <!-- 4 KPI Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                
+                <!-- KPI 1: Days Exercised -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div class="absolute -right-3 -bottom-3 text-slate-100 group-hover:text-emerald-50 transition-colors">
+                        <i class="fa-solid fa-person-running text-7xl"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">จำนวนวันออกกำลังกาย</span>
+                            <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm font-bold">
+                                <i class="fa-solid fa-dumbbell"></i>
+                            </span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-3xl font-extrabold text-slate-900">5</span>
+                            <span class="text-sm font-medium text-slate-500">/ 7 วัน</span>
+                        </div>
+                        <div class="mt-3 flex items-center gap-1.5 text-xs text-emerald-700 font-medium">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>ครบตามเป้าหมาย 5 วัน/สัปดาห์</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 2: Total Exercise Duration -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div class="absolute -right-3 -bottom-3 text-slate-100 group-hover:text-amber-50 transition-colors">
+                        <i class="fa-solid fa-stopwatch text-7xl"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">เวลารวมออกกำลังกาย</span>
+                            <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-sm font-bold">
+                                <i class="fa-solid fa-clock"></i>
+                            </span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-3xl font-extrabold text-slate-900">195</span>
+                            <span class="text-sm font-medium text-slate-500">นาที</span>
+                        </div>
+                        <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-600 font-medium">
+                            <i class="fa-solid fa-hourglass-half text-amber-500"></i>
+                            <span>คิดเป็น 3 ชั่วโมง 15 นาที</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Avg Sleep Duration -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div class="absolute -right-3 -bottom-3 text-slate-100 group-hover:text-purple-50 transition-colors">
+                        <i class="fa-solid fa-moon text-7xl"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">ชั่วโมงนอนเฉลี่ย</span>
+                            <span class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-sm font-bold">
+                                <i class="fa-solid fa-bed"></i>
+                            </span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-3xl font-extrabold text-slate-900">7.4</span>
+                            <span class="text-sm font-medium text-slate-500">ชม./คืน</span>
+                        </div>
+                        <div class="mt-3 flex items-center gap-1.5 text-xs text-emerald-700 font-medium">
+                            <i class="fa-solid fa-thumbs-up"></i>
+                            <span>อยู่ในเกณฑ์ดีเยี่ยม (7-9 ชม.)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 4: Avg Water Intake -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div class="absolute -right-3 -bottom-3 text-slate-100 group-hover:text-sky-50 transition-colors">
+                        <i class="fa-solid fa-bottle-water text-7xl"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">ปริมาณน้ำดื่มเฉลี่ย</span>
+                            <span class="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center text-sm font-bold">
+                                <i class="fa-solid fa-droplet"></i>
+                            </span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-3xl font-extrabold text-slate-900">2.18</span>
+                            <span class="text-sm font-medium text-slate-500">ลิตร/วัน</span>
+                        </div>
+                        <div class="mt-3 flex items-center gap-1.5 text-xs text-amber-700 font-medium" title="คำนวณตามเกณฑ์ 35 ml x 85 kg = ~3 L">
+                            <i class="fa-solid fa-circle-exclamation text-amber-500"></i>
+                            <span>ต่ำกว่าเป้าหมาย 3 ลิตร (สำหรับ 85 กก.)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main Content Section: Chart & AI Insights -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                
+                <!-- Chart Area (Spans 2 Columns) -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 mb-4 border-b border-slate-100 gap-2">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-brand-600"></i>
+                                แนวโน้มการนอนหลับและการดื่มน้ำ (7 วัน)
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">เปรียบเทียบชั่วโมงการนอน (ชม.) และปริมาณน้ำดื่ม (ลิตร) ในแต่ละวัน</p>
+                        </div>
+                        <div class="flex items-center gap-4 text-xs font-medium">
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
+                                การนอน (ชม.)
+                            </span>
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-full bg-sky-500 inline-block"></span>
+                                น้ำดื่ม (ลิตร)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Container -->
+                    <div class="relative w-full h-[280px] sm:h-[320px]">
+                        <canvas id="healthTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Personal Advice & Evaluation Box -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-md flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-3">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>สรุปประเมินสุขภาพรายสัปดาห์</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">ข้อเสนอแนะประจำสัปดาห์</h3>
+
+                        <ul class="space-y-3.5 text-xs sm:text-sm text-slate-300">
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
+                                <span><strong class="text-white">วินัยออกกำลังกายดีเยี่ยม:</strong> ออกกำลังกายได้ครบ 5 วันตามเป้าหมาย มีทั้งวิ่งและปั่นจักรยาน ช่วยสร้างความฟิตได้อย่างต่อเนื่อง</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
+                                <span><strong class="text-white">คุณภาพการนอนหลับสม่ำเสมอ:</strong> นอนเฉลี่ย 7.4 ชม./คืน โดยมีถึง 3 คืนที่นอนเต็มอิ่ม 8 ชม. ร่างกายฟื้นฟูได้เต็มที่</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-droplet text-sky-400 mt-1 flex-shrink-0"></i>
+                                <span><strong class="text-white">จุดที่ควรปรับปรุง (น้ำดื่ม):</strong> ปริมาณน้ำเฉลี่ย 2.18 ลิตร ยังต่ำกว่าเป้าหมาย ~3 ลิตร/วัน สำหรับคนหนัก 85 กก. ควรพกขวดน้ำติดตัวและจิบเพิ่มอีกวันละ 2-3 แก้ว</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-700/60 flex items-center justify-between text-xs text-slate-400">
+                        <span>น้ำหนักเป้าหมาย: 85.0 กก.</span>
+                        <span class="text-emerald-400 font-medium">สัปดาห์ถัดไป: สู้ต่อไป! 💪</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Daily Activity Table Section -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden mb-10">
+                <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-brand-600"></i>
+                            บันทึกกิจกรรมประจำวัน (Daily Log)
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">รายละเอียดกิจกรรม การนอน และปริมาณน้ำดื่มย้อนหลัง 7 วัน</p>
+                    </div>
+                </div>
+
+                <!-- Desktop / Tablet Table view -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="py-3.5 px-5">วันที่</th>
+                                <th class="py-3.5 px-5">กิจกรรมออกกำลังกาย</th>
+                                <th class="py-3.5 px-5">ระยะเวลา</th>
+                                <th class="py-3.5 px-5">การนอนหลับ</th>
+                                <th class="py-3.5 px-5">น้ำดื่ม</th>
+                                <th class="py-3.5 px-5 text-center">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm">
+                            
+                            <!-- Day 1 -->
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="py-4 px-5 font-medium text-slate-900 whitespace-nowrap">
+                                    7 ก.ย. <span class="text-xs text-slate-500 font-normal">(จันทร์)</span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-person-running"></i>
+                                        </span>
+                                        <span class="font-medium text-slate-800">วิ่ง (Running)</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-5 font-semibold text-slate-700 whitespace-nowrap">30 นาที</td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-purple-700 font-medium">
+                                        <i class="fa-regular fa-moon text-xs"></i> 7.2 ชม.
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-sky-700 font-medium">
+                                        <i class="fa-solid fa-droplet text-xs"></i> 1.8 ลิตร
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 text-center whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                        สำเร็จ
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <!-- Day 2 -->
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="py-4 px-5 font-medium text-slate-900 whitespace-nowrap">
+                                    8 ก.ย. <span class="text-xs text-slate-500 font-normal">(อังคาร)</span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-person-biking"></i>
+                                        </span>
+                                        <span class="font-medium text-slate-800">ปั่นจักรยาน (Cycling)</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-5 font-semibold text-slate-700 whitespace-nowrap">45 นาที</td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-purple-700 font-medium">
+                                        <i class="fa-regular fa-moon text-xs"></i> 6.5 ชม.
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-sky-700 font-medium">
+                                        <i class="fa-solid fa-droplet text-xs"></i> 1.5 ลิตร
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 text-center whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                        สำเร็จ
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <!-- Day 3 -->
+                            <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/40">
+                                <td class="py-4 px-5 font-medium text-slate-900 whitespace-nowrap">
+                                    9 ก.ย. <span class="text-xs text-slate-500 font-normal">(พุธ)</span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-bed text-xs"></i>
+                                        </span>
+                                        <span class="font-normal text-slate-500">วันพักผ่อน (Rest Day)</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-5 text-slate-400 whitespace-nowrap">-</td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-purple-700 font-medium">
+                                        <i class="fa-regular fa-moon text-xs"></i> 7.0 ชม.
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-sky-700 font-medium">
+                                        <i class="fa-solid fa-droplet text-xs"></i> 2.0 ลิตร
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 text-center whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                        พักผ่อน
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <!-- Day 4 -->
+                            <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/40">
+                                <td class="py-4 px-5 font-medium text-slate-900 whitespace-nowrap">
+                                    10 ก.ย. <span class="text-xs text-slate-500 font-normal">(พฤหัสบดี)</span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-bed text-xs"></i>
+                                        </span>
+                                        <span class="font-normal text-slate-500">วันพักผ่อน (Rest Day)</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-5 text-slate-400 whitespace-nowrap">-</td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-purple-700 font-semibold">
+                                        <i class="fa-regular fa-moon text-xs"></i> 8.0 ชม. ✨
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-sky-700 font-medium">
+                                        <i class="fa-solid fa-droplet text-xs"></i> 2.5 ลิตร
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 text-center whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                        พักผ่อน
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <!-- Day 5 -->
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="py-4 px-5 font-medium text-slate-900 whitespace-nowrap">
+                                    11 ก.ย. <span class="text-xs text-slate-500 font-normal">(ศุกร์)</span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-person-running"></i>
+                                        </span>
+                                        <span class="font-medium text-slate-800">วิ่ง (Running)</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-5 font-semibold text-slate-700 whitespace-nowrap">30 นาที</td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-purple-700 font-medium">
+                                        <i class="fa-regular fa-moon text-xs"></i> 7.5 ชม.
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-sky-700 font-medium">
+                                        <i class="fa-solid fa-droplet text-xs"></i> 2.2 ลิตร
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 text-center whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                        สำเร็จ
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <!-- Day 6 -->
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="py-4 px-5 font-medium text-slate-900 whitespace-nowrap">
+                                    12 ก.ย. <span class="text-xs text-slate-500 font-normal">(เสาร์)</span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-person-running"></i>
+                                        </span>
+                                        <span class="font-medium text-slate-800">วิ่ง (Running)</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-5 font-semibold text-slate-700 whitespace-nowrap">30 นาที</td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-purple-700 font-semibold">
+                                        <i class="fa-regular fa-moon text-xs"></i> 8.0 ชม. ✨
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-sky-700 font-medium">
+                                        <i class="fa-solid fa-droplet text-xs"></i> 2.5 ลิตร
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 text-center whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                        สำเร็จ
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <!-- Day 7 -->
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="py-4 px-5 font-medium text-slate-900 whitespace-nowrap">
+                                    13 ก.ย. <span class="text-xs text-slate-500 font-normal">(อาทิตย์)</span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-person-biking"></i>
+                                        </span>
+                                        <span class="font-medium text-slate-800">ปั่นจักรยาน (Cycling)</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-5 font-semibold text-slate-700 whitespace-nowrap">60 นาที (1 ชม.)</td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-purple-700 font-medium">
+                                        <i class="fa-regular fa-moon text-xs"></i> 7.8 ชม.
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 text-sky-700 font-semibold">
+                                        <i class="fa-solid fa-droplet text-xs"></i> 2.8 ลิตร 💧
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 text-center whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                        สำเร็จ
+                                    </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Chart Configuration Script -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('healthTrendChart').getContext('2d');
+
+            // Data configuration
+            const labels = ['7 ก.ย. (จ)', '8 ก.ย. (อ)', '9 ก.ย. (พ)', '10 ก.ย. (พฤ)', '11 ก.ย. (ศ)', '12 ก.ย. (ส)', '13 ก.ย. (อา)'];
+            const sleepData = [7.2, 6.5, 7.0, 8.0, 7.5, 8.0, 7.8];
+            const waterData = [1.8, 1.5, 2.0, 2.5, 2.2, 2.5, 2.8];
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'ชั่วโมงการนอน (ชม.)',
+                            data: sleepData,
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#8b5cf6',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            tension: 0.35,
+                            fill: true,
+                            yAxisID: 'ySleep'
+                        },
+                        {
+                            label: 'ปริมาณน้ำดื่ม (ลิตร)',
+                            data: waterData,
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.08)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#0ea5e9',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            tension: 0.35,
+                            fill: true,
+                            yAxisID: 'yWater'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Using custom legends in HTML header
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleFont: { family: 'Kanit', size: 13, weight: '600' },
+                            bodyFont: { family: 'Kanit', size: 12 },
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: { family: 'Kanit', size: 11 },
+                                color: '#64748b'
+                            }
+                        },
+                        ySleep: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 4,
+                            max: 10,
+                            grid: {
+                                color: '#f1f5f9'
+                            },
+                            ticks: {
+                                font: { family: 'Kanit', size: 11 },
+                                color: '#8b5cf6',
+                                callback: function(value) {
+                                    return value + ' ชม.';
+                                }
+                            },
+                            title: {
+                                display: false
+                            }
+                        },
+                        yWater: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 0,
+                            max: 4,
+                            grid: {
+                                drawOnChartArea: false // prevent duplicated grid lines
+                            },
+                            ticks: {
+                                font: { family: 'Kanit', size: 11 },
+                                color: '#0ea5e9',
+                                callback: function(value) {
+                                    return value + ' ลิตร';
+                                }
+                            },
+                            title: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
